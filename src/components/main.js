@@ -46,7 +46,6 @@ class Main extends React.Component {
         window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     }
     render(){
-        let a = localStorage.getItem("activites");
         return(
             <div className=".container-xxl">
                 <div className="p-5 text-center w-75 m-auto">
