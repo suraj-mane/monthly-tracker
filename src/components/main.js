@@ -9,17 +9,20 @@ class Main extends React.Component {
             activities: [],
         }
     }
-    addActivity = (event) => {this.setState({activity:event.target.value})};
+    addActivity = (event) => {this.setState({activity:event.target.value})}
     MonthOfDays = () =>{ return Array(30).fill().map((_,i )=> { return {day:i+1, isSelecte:false}})};
     handleSubmit = (event) => {
         event.preventDefault();
-        let activity = [{
-            name:this.state.activity,
-            days: [...this.MonthOfDays()],
-            month: new Date().toLocaleString('default', { month: 'long' })
-        }]
-        this.setState({activities:activity});
-        this.setState({activity:" "});
+        this.setState((prevState) => {
+            return {
+                activities: prevState.activities.concat([{
+                    name:this.state.activity,
+                    days: [...this.MonthOfDays()],
+                    month: new Date().toLocaleString('default', { month: 'long' })
+                }])
+            }
+        });
+        this.setState({activity:""});
         window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     } 
     handelSelectDay = (activity, dayIndex) => {
@@ -38,16 +41,12 @@ class Main extends React.Component {
     }
     handelDeleteActivity = (index) => {
         let {activities} = this.state;
-        if(index){
-            activities = activities.splice(index,1);
-            this.setState({activities: activities});
-        }
-        console.log(activities)
+        activities.splice(0,1) 
+        this.setState({activities: activities});
         window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     }
     render(){
         let a = localStorage.getItem("activites");
-        console.log(a);
         return(
             <div className=".container-xxl">
                 <div className="p-5 text-center w-75 m-auto">
