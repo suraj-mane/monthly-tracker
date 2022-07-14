@@ -6,40 +6,48 @@ class Main extends React.Component {
         super();
         this.state = {
             activity:"",
-            activities:{},
+            activities: [],
         }
     }
-    addActivity = (event) => {this.setState({activity:event.target.value})}
-
+    addActivity = (event) => {this.setState({activity:event.target.value})};
+    MonthOfDays = () =>{ return Array(30).fill().map((_,i )=> { return {day:i+1, isSelecte:false}})};
     handleSubmit = (event) => {
         event.preventDefault();
-        let { activities, activity } = this.state;
-        if (activity !== "") {
-          activities[activity] = [];
-          activity = "";
-        }
-        this.setState({ activities, activity });
-        window.localStorage.setItem("activities",JSON.stringify(activities));
+        let activity = [{
+            name:this.state.activity,
+            days: [...this.MonthOfDays()],
+            month: new Date().toLocaleString('default', { month: 'long' })
+        }]
+        this.setState({activities:activity});
+        this.setState({activity:" "});
+        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     } 
-    handelclick = (ele,d) =>{
-        let {activities} = this.state
-        if(activities[ele].includes(d)){
-            activities[ele] = activities[ele].filter((s) => s !== d)
-        } else {
-            activities[ele] = activities[ele].concat(d);
-        }
-        this.setState({activities})
-        window.localStorage.setItem("activities",JSON.stringify(activities));
-    }
-    handelDelete = (ele) =>{
+    handelSelectDay = (activity, dayIndex) => {
         let {activities} = this.state;
-        delete activities[ele];
-        this.setState({activities}); 
-        window.localStorage.setItem("activities",JSON.stringify(activities));
+         activities.forEach((ele, i) => {
+            if(ele.name === activity){
+                ele.days.forEach((day) => {
+                    if(day.day === dayIndex){
+                        day.isSelecte = !day.isSelecte;
+                    }
+                } )
+            }
+         });
+        this.setState({activities:activities});
+        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
+    }
+    handelDeleteActivity = (index) => {
+        let {activities} = this.state;
+        if(index){
+            activities = activities.splice(index,1);
+            this.setState({activities: activities});
+        }
+        console.log(activities)
+        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     }
     render(){
-        var a = window.localStorage.getItem("activities");
-        var activities = JSON.parse(a);
+        let a = localStorage.getItem("activites");
+        console.log(a);
         return(
             <div className=".container-xxl">
                 <div className="p-5 text-center w-75 m-auto">
@@ -48,7 +56,7 @@ class Main extends React.Component {
                         <input type="text" className="form-control w-50 d-inline" placeholder="Type something" value={this.state.activity} onChange={this.addActivity} />
                         <button className="btn btn-primary d-inline ms-2">Add Activity</button>
                     </form>
-                    <Activity data={activities} handelclick={this.handelclick} handelDelete={this.handelDelete} />
+                    <Activity activities={this.state.activities} handelSelectDay={this.handelSelectDay} handelDeleteActivity={this.handelDeleteActivity}/>
                 </div>
             </div>
         )
