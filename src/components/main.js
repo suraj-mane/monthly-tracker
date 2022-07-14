@@ -9,6 +9,10 @@ class Main extends React.Component {
             activities: [],
         }
     }
+    componentDidUpdate() {
+        localStorage.setItem("activities",JSON.stringify(this.state.activities))
+    }
+    
     addActivity = (event) => {this.setState({activity:event.target.value})}
     MonthOfDays = () =>{ return Array(30).fill().map((_,i )=> { return {day:i+1, isSelecte:false}})};
     handleSubmit = (event) => {
@@ -23,7 +27,7 @@ class Main extends React.Component {
             }
         });
         this.setState({activity:""});
-        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
+        
     } 
     handelSelectDay = (activity, dayIndex) => {
         let {activities} = this.state;
@@ -37,15 +41,15 @@ class Main extends React.Component {
             }
          });
         this.setState({activities:activities});
-        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
+        
     }
     handelDeleteActivity = (index) => {
         let {activities} = this.state;
-        activities.splice(0,1) 
+        activities.splice(index,1) 
         this.setState({activities: activities});
-        window.localStorage.setItem("activities",JSON.stringify(this.state.activities));
     }
     render(){
+
         return(
             <div className=".container-xxl">
                 <div className="p-5 text-center w-75 m-auto">
